@@ -1,9 +1,3 @@
-//
-//  SignUpViewController.swift
-//  Bubbles
-//
-//  Created by Bing Hang on 18/1/25.
-//
 import UIKit
 class SignupViewController: UIViewController {
 

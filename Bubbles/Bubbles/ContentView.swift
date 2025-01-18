@@ -98,12 +98,16 @@ struct ContentView: View {
             elapsedTime += 1
 
             // Trigger alert and change image every 5 seconds
-            if elapsedTime % 5 == 0 {
+            if elapsedTime == 5 {
+                changeImage() // Change the image when the notification is triggered
+                }
+            else if elapsedTime % 15 == 0 {
                 showAlert = true
                 changeImage() // Change the image when the notification is triggered
             }
+            }
         }
-    }
+    
 
     private func resetTimer() {
         timer?.invalidate()
