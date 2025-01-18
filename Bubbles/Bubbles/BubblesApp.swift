@@ -10,7 +10,7 @@ import SwiftUI
 struct BubblesApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView() // This is where the ContentView is displayed
+            LoginPage() // This is where the ContentView is displayed
         }
     }
 }

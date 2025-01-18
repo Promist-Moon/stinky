@@ -4,9 +4,11 @@
 //
 //  Created by Bing Hang on 18/1/25.
 //
+
+
 import SwiftUI
 
-struct LoginPage: View {
+struct SignUpPage: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var isLoginSuccessful: Bool = false
@@ -16,7 +18,7 @@ struct LoginPage: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text("Showering now?")
+                Text("Want to shower?")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
@@ -36,9 +38,9 @@ struct LoginPage: View {
 
                 // Login Button
                 Button(action: {
-                    handleLogin()
+                    handleSignUp()
                 }) {
-                    Text("Login")
+                    Text("Sign Up")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
@@ -48,23 +50,15 @@ struct LoginPage: View {
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text("Login Status"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                 }
-                
-                // Sign Up Button
-                NavigationLink(destination: SignUpPage()) {
-                    Text("Don't have an account? Sign Up")
-                        .foregroundColor(.blue)
-                        .padding(.top)
-                }
-
                 Spacer()
             }
             .padding()
-            .navigationTitle("Login")
+            .navigationTitle("Sign Up")
         }
     }
 
     // Function to handle login
-    private func handleLogin() {
+    private func handleSignUp() {
         if username.isEmpty || password.isEmpty {
             errorMessage = "Both fields are required."
             showAlert = true
@@ -75,6 +69,7 @@ struct LoginPage: View {
         if username == "user" && password == "password" {
             isLoginSuccessful = true
             errorMessage = "Login successful!"
+            
         } else {
             errorMessage = "Invalid username or password."
         }
@@ -83,9 +78,8 @@ struct LoginPage: View {
     }
 }
 
-struct LoginPage_Previews: PreviewProvider {
+struct SignUpPage_Previews: PreviewProvider {
     static var previews: some View {
-        LoginPage()
+        SignUpPage()
     }
 }
-

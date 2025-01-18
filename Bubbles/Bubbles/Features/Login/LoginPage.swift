@@ -4,25 +4,23 @@
 //
 //  Created by Bing Hang on 18/1/25.
 //
-
-
 import SwiftUI
 
-struct SignUpPage: View {
+struct LoginPage: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var isLoginSuccessful: Bool = false
     @State private var showAlert: Bool = false
     @State private var errorMessage: String = ""
+    @State private var navigateToMain: Bool = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {  // Changed from NavigationView to NavigationStack
             VStack(spacing: 20) {
-                Text("Want to shower?")
+                Text("Showering now?")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                // Username TextField
                 TextField("Enter your username", text: $username)
                     .padding()
                     .background(Color.gray.opacity(0.2))
@@ -30,17 +28,15 @@ struct SignUpPage: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
 
-                // Password SecureField
                 SecureField("Enter your password", text: $password)
                     .padding()
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(8)
 
-                // Login Button
                 Button(action: {
-                    handleSignUp()
+                    handleLogin()
                 }) {
-                    Text("Sign Up")
+                    Text("Login")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
@@ -48,28 +44,51 @@ struct SignUpPage: View {
                         .cornerRadius(8)
                 }
                 .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Login Status"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+                    Alert(title: Text("Login Status"),
+                          message: Text(errorMessage),
+                          dismissButton: .default(Text("OK")) {
+                              if isLoginSuccessful {
+                                  navigateToMain = true
+                              }
+                          })
                 }
+                
+                // Using navigationDestination instead of NavigationLink
+                .navigationDestination(isPresented: $navigateToMain) {
+                    ContentView()
+                }
+                
+                // Modern NavigationLink for SignUp
+                NavigationLink(value: "signup") {
+                    Text("Don't have an account? Sign Up")
+                        .foregroundColor(.blue)
+                        .padding(.top)
+                }
+
                 Spacer()
             }
             .padding()
-            .navigationTitle("Sign Up")
+            .navigationTitle("Login")
+            .navigationDestination(for: String.self) { route in
+                if route == "signup" {
+                    SignUpPage()
+                }
+            }
         }
     }
 
-    // Function to handle login
-    private func handleSignUp() {
+    private func handleLogin() {
         if username.isEmpty || password.isEmpty {
             errorMessage = "Both fields are required."
             showAlert = true
             return
         }
 
-        // Simulated login validation
         if username == "user" && password == "password" {
             isLoginSuccessful = true
             errorMessage = "Login successful!"
         } else {
+            isLoginSuccessful = false
             errorMessage = "Invalid username or password."
         }
 
@@ -77,8 +96,8 @@ struct SignUpPage: View {
     }
 }
 
-struct SignUpPage_Previews: PreviewProvider {
+struct LoginPage_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpPage()
+        LoginPage()
     }
 }
