@@ -7,9 +7,13 @@ struct ContentView: View {
     @State private var timer: Timer? = nil
     @State private var showAlert: Bool = false
 
+    // State to track the current image
+    @State private var currentImageIndex: Int = 0
+    @State private var images = ["1st", "2nd", "3rd", "4th"]  // Replace with your image names
+
     // Animation-related states
-    @State private var pictureOffset: CGFloat = UIScreen.main.bounds.height // Controls the position of the picture
-    @State private var isPictureHidden: Bool = false // Controls the visibility of the picture
+    @State private var pictureOffset: CGFloat = UIScreen.main.bounds.height // Controls the position of the bubbles
+    @State private var isPictureHidden: Bool = false // Controls the visibility of the bubbles
 
     var body: some View {
         ZStack {
@@ -29,15 +33,12 @@ struct ContentView: View {
 
                 Spacer()
 
-                // Animated picture
-                if !isPictureHidden {
-                    Image("Image")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: UIScreen.main.bounds.width)
-                        .offset(y: pictureOffset)
-                        .animation(.easeInOut(duration: 4.0), value: pictureOffset)
-                }
+                // Dog image
+                Image(images[currentImageIndex])
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 400, height: 400)
+                    .id(currentImageIndex) // Force SwiftUI to redraw the image when the index changes
 
                 Spacer()
 
@@ -45,7 +46,8 @@ struct ContentView: View {
                 Button(action: {
                     resetTimer()
                     startTimer()
-                    triggerPictureAnimation()
+                    resetImage() // Reset the image to the first one
+                    triggerPictureAnimation() // Trigger the bubbles animation
                 }) {
                     Text("I have showered!")
                         .padding()
@@ -67,28 +69,38 @@ struct ContentView: View {
                 Alert(
                     title: Text("Stinky Stinky!"),
                     message: Text("Take a Shower!"),
-                    dismissButton: .default(Text("Ok!")){
+                    dismissButton: .default(Text("Ok!")) {
                         showAlert = false
                     }
                 )
             }
-        }
-        .onAppear {
-            // Request notification permission when the view appears
-            requestNotificationPermission()
+
+            // Bubbles animation
+            if !isPictureHidden {
+                Image("Image") // Ensure this matches the name of the bubbles image in the asset folder
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIScreen.main.bounds.width)
+                    .offset(y: pictureOffset)
+                    .animation(.easeInOut(duration: 4.0), value: pictureOffset)
+            }
         }
         .onDisappear {
             timer?.invalidate() // Stop timer when leaving view
+        }
+        .onAppear {
+            requestNotificationPermission() // Request notification permission when the view appears
         }
     }
 
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             elapsedTime += 1
-            
-            // Trigger notification when elapsed time exceeds 100 seconds
-            if elapsedTime % 10 == 0 {
-                triggerNotification()
+
+            // Trigger alert and change image every 5 seconds
+            if elapsedTime % 5 == 0 {
+                showAlert = true
+                changeImage() // Change the image when the notification is triggered
             }
         }
     }
@@ -96,6 +108,20 @@ struct ContentView: View {
     private func resetTimer() {
         timer?.invalidate()
         elapsedTime = 0
+    }
+
+    // Change the image to the next one in the list
+    private func changeImage() {
+        withAnimation {
+            currentImageIndex = (currentImageIndex + 1) % images.count // Cycle through the images
+        }
+    }
+
+    // Reset the image to the default (first image)
+    private func resetImage() {
+        withAnimation {
+            currentImageIndex = 0 // Reset to the first image
+        }
     }
 
     // Request permission for notifications
@@ -127,7 +153,7 @@ struct ContentView: View {
         }
     }
 
-    // Trigger the animation
+    // Trigger the bubbles animation
     private func triggerPictureAnimation() {
         pictureOffset = UIScreen.main.bounds.height
         isPictureHidden = false

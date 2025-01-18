@@ -8,9 +8,12 @@ import SwiftUI
 
 @main
 struct BubblesApp: App {
+    @StateObject private var userManager = UserManager()
+    
     var body: some Scene {
         WindowGroup {
             LoginPage() // This is where the ContentView is displayed
+                .environmentObject(userManager)
         }
     }
 }

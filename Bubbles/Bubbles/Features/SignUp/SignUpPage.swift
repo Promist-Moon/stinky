@@ -11,75 +11,76 @@ import SwiftUI
 struct SignUpPage: View {
     @State private var username: String = ""
     @State private var password: String = ""
-    @State private var isLoginSuccessful: Bool = false
+    @State private var isSignedUp: Bool = false
     @State private var showAlert: Bool = false
     @State private var errorMessage: String = ""
+    @State private var navigateToMain: Bool = false
+    @EnvironmentObject var userManager: UserManager
 
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text("Want to shower?")
+                Text("Sign Up")
                     .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .bold()
 
-                // Username TextField
-                TextField("Enter your username", text: $username)
+                TextField("Username", text: $username)
                     .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-
-                // Password SecureField
-                SecureField("Enter your password", text: $password)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                
+                SecureField("Password", text: $password)
                     .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                // Login Button
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                
                 Button(action: {
                     handleSignUp()
                 }) {
                     Text("Sign Up")
-                        .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
                 .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Login Status"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+                    Alert(title: Text("Sign Up Status"),
+                          message: Text(errorMessage),
+                          dismissButton: .default(Text("OK")) {
+                              if isSignedUp {
+                                  navigateToMain = true
+                              }
+                          })
                 }
-                Spacer()
+
+                NavigationLink(destination: ContentView(), isActive: $isSignedUp) {
+                    EmptyView()
+                }
             }
             .padding()
             .navigationTitle("Sign Up")
         }
     }
-
-    // Function to handle login
+    
     private func handleSignUp() {
-        if username.isEmpty || password.isEmpty {
-            errorMessage = "Both fields are required."
+        let users = userManager.loadUsers()
+        
+        if let existingUser = users.first(where: { $0.username == username }) {
+            // If user exists, tell them to login
+            errorMessage = "Username already exists. Proceed to login"
             showAlert = true
             return
-        }
-
-        // Simulated login validation
-        if username == "user" && password == "password" {
-            isLoginSuccessful = true
-            errorMessage = "Login successful!"
-            
         } else {
-            errorMessage = "Invalid username or password."
+            // If user does not exist, sign up
+            let newUser = User(id: UUID(), username: username, password: password, friends: [], lastShowerDate: nil)
+            var users = userManager.loadUsers()
+            users.append(newUser)
+            userManager.saveUsers(users)
+            isSignedUp = true
+            errorMessage = "Sign up successful"
         }
-
         showAlert = true
-    }
-}
-
-struct SignUpPage_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpPage()
     }
 }

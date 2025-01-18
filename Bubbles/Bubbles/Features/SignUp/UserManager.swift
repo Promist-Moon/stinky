@@ -9,13 +9,13 @@ import Foundation
 
 struct User: Codable, Identifiable {
     let id: UUID
-    var name: String
-    var email: String
+    var username: String
+    var password: String
     var friends: [UUID] // Array of friend IDs
     var lastShowerDate: Date?
 }
 
-class UserManager {
+class UserManager: ObservableObject {
     private let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("users.json")
 
     // Save users
