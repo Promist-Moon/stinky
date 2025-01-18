@@ -96,18 +96,17 @@ struct ContentView: View {
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             elapsedTime += 1
-
+            
             // Trigger alert and change image every 5 seconds
             if elapsedTime == 5 {
                 changeImage() // Change the image when the notification is triggered
-                }
+            }
             else if elapsedTime % 15 == 0 {
                 showAlert = true
                 changeImage() // Change the image when the notification is triggered
             }
-            }
         }
-    
+        }
 
     private func resetTimer() {
         timer?.invalidate()
@@ -116,10 +115,17 @@ struct ContentView: View {
 
     // Change the image to the next one in the list
     private func changeImage() {
-        withAnimation {
-            currentImageIndex = (currentImageIndex + 1) % images.count // Cycle through the images
-        }
-    }
+           if currentImageIndex == 3{
+               withAnimation{
+                   currentImageIndex
+               }
+           }
+           else{
+               withAnimation {
+                   currentImageIndex = (currentImageIndex + 1) % images.count // Cycle through the images
+               }
+           }
+       }
 
     // Reset the image to the default (first image)
     private func resetImage() {

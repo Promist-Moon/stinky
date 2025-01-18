@@ -67,7 +67,7 @@ struct SignUpPage: View {
     private func handleSignUp() {
         let users = userManager.loadUsers()
         
-        if let existingUser = users.first(where: { $0.username == username }) {
+        if users.first(where: { $0.username == username }) != nil {
             // If user exists, tell them to login
             errorMessage = "Username already exists. Proceed to login"
             showAlert = true
