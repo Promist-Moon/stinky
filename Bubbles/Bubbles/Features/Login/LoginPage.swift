@@ -84,7 +84,7 @@ struct LoginPage: View {
             return
         }
 
-        if username == "user" && password == "password" {
+        if username == "1" && password == "1" {
             isLoginSuccessful = true
             errorMessage = "Login successful!"
         } else {
